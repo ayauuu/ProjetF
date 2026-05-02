@@ -54,8 +54,9 @@ $moods = [
           <button class="mood-btn <?= $moodAujourdhui===$key?'active':'' ?>"
                   data-mood="<?= $key ?>"
                   <?= !$user ? 'onclick="document.querySelector(\'[data-open-auth=login]\').click()" ' : '' ?>
-                  style="<?= $moodAujourdhui===$key?'border-color:'.$m['color'].';background:'.str_replace('#','rgba(',str_replace(')',')',str_replace(')',',0.1)',$m['color'])).':' : '' ?>">
-            <span class="mood-emoji"><?= $m['emoji'] ?></span>
+style="<?= $moodAujourdhui === $key 
+    ? 'border-color:' . $m['color'] . '; background:' . $m['color'] . '1a;' 
+    : '' ?>"            <span class="mood-emoji"><?= $m['emoji'] ?></span>
             <span class="mood-label"><?= $m['label'] ?></span>
           </button>
         <?php endforeach; ?>
