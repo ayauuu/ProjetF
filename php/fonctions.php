@@ -223,23 +223,39 @@ function updateProfil(int $userId, string $bio, string $genreFavori): array {
 // ─── HELPERS ───
 
 function genreLabel(string $g): string {
-    return match($g) {
-        'pop'=>'Pop','rnb'=>'R&B','electro'=>'Électro',
-        'rock'=>'Rock','rap'=>'Rap','jazz'=>'Jazz',default=>'Autre'
-    };
+    switch ($g) {
+        case 'pop':     return 'Pop';
+        case 'rnb':     return 'R&B';
+        case 'electro': return 'Électro';
+        case 'rock':    return 'Rock';
+        case 'rap':     return 'Rap';
+        case 'jazz':    return 'Jazz';
+        default:        return 'Autre';
+    }
 }
 
 function humeurLabel(string $h): string {
-    return match($h) {
-        'happy'=>'Happy 😊','chill'=>'Chill 😌','energetic'=>'Energetic ⚡',
-        'sad'=>'Sad 🥺','romantic'=>'Romantic 💕','hype'=>'Hype 🔥',default=>'?'
-    };
+    switch ($h) {
+        case 'happy':     return 'Happy 😊';
+        case 'chill':     return 'Chill 😌';
+        case 'energetic': return 'Energetic ⚡';
+        case 'sad':       return 'Sad 🥺';
+        case 'romantic':  return 'Romantic 💕';
+        case 'hype':      return 'Hype 🔥';
+        default:          return '?';
+    }
 }
 
 function humeurEmoji(string $h): string {
-    return match($h) {
-        'happy'=>'😊','chill'=>'😌','energetic'=>'⚡','sad'=>'🥺','romantic'=>'💕','hype'=>'🔥',default=>'🎵'
-    };
+    switch ($h) {
+        case 'happy':     return '😊';
+        case 'chill':     return '😌';
+        case 'energetic': return '⚡';
+        case 'sad':       return '🥺';
+        case 'romantic':  return '💕';
+        case 'hype':      return '🔥';
+        default:          return '🎵';
+    }
 }
 
 function initialesAvatar(string $pseudo): string {
