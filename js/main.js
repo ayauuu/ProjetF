@@ -324,41 +324,68 @@ function initCommentaires() {
 
 /* ─── Recherche live ─── */
 function initSearch() {
-  const input = document.getElementById('search-input');
-  const list  = document.getElementById('search-results');
-  if (!input || !list) return;
+  const input    = document.getElementById('search-input');
+  const results  = document.getElementById('search-results');
+  const songList = document.getElementById('song-list');
+  if (!input || !results) return;
 
   let timer;
+
   input.addEventListener('input', () => {
     clearTimeout(timer);
     const q = input.value.trim();
-    if (q.length < 2) { list.innerHTML = ''; return; }
+
+    // Vide → remontre la liste principale
+    if (q.length < 2) {
+      results.innerHTML = '';
+      if (songList) songList.style.display = '';
+      return;
+    }
+
+    // Cache la liste principale
+    if (songList) songList.style.display = 'none';
 
     timer = setTimeout(async () => {
-      const res  = await fetch(`php/api.php?action=recherche&q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      list.innerHTML = '';
-      if (!data.length) {
-        list.innerHTML = '<div class="empty-state"><p>Aucun résultat.</p></div>';
-        return;
+      try {
+        const res  = await fetch('php/api.php?action=recherche&q=' + encodeURIComponent(q));
+        const data = await res.json();
+        results.innerHTML = '';
+
+        if (!data.length) {
+          results.innerHTML = '<div class="empty-state"><p>Aucun résultat pour <strong>' + escHtml(q) + '</strong></p></div>';
+          return;
+        }
+
+        data.forEach((s, i) => {
+          const el = document.createElement('div');
+          el.className = 'song-card fade-in';
+          el.style.animationDelay = (i * 0.05) + 's';
+          el.innerHTML =
+            '<div class="song-rank">' + (i+1) + '</div>' +
+            '<div class="song-disc">🎵</div>' +
+            '<div class="song-info">' +
+              '<div class="song-title">' + escHtml(s.titre) + '</div>' +
+              '<div class="song-artist">' + escHtml(s.artiste) + '</div>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+              '<span class="tag">' + escHtml(s.genre) + '</span>' +
+              '<span style="font-size:0.8rem;color:var(--pink);font-weight:700">▲ ' + s.votes_total + '</span>' +
+            '</div>';
+          results.appendChild(el);
+        });
+      } catch(e) {
+        results.innerHTML = '<div class="empty-state"><p>Erreur de recherche.</p></div>';
       }
-      data.forEach((s, i) => {
-        const el = document.createElement('div');
-        el.className = 'song-card fade-in';
-        el.style.animationDelay = (i * 0.05) + 's';
-        el.innerHTML = `
-          <div class="song-rank">${i+1}</div>
-          <div class="song-disc">🎵</div>
-          <div class="song-info">
-            <div class="song-title">${escHtml(s.titre)}</div>
-            <div class="song-artist">${escHtml(s.artiste)}</div>
-          </div>
-          <span class="tag">${escHtml(s.genre)}</span>
-          <span style="font-size:0.8rem;color:var(--pink);font-weight:700">▲ ${s.votes_total}</span>
-        `;
-        list.appendChild(el);
-      });
     }, 250);
+  });
+
+  // Escape pour effacer
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      input.value = '';
+      results.innerHTML = '';
+      if (songList) songList.style.display = '';
+    }
   });
 }
 
